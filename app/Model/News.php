@@ -6,20 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Category extends Model
+class News extends Model
 {
     use HasSlug;
 
     public function getSlugOptions() : SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('name')
+            ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
-    protected $fillable=['name','status','image'];
+    protected $fillable=['title','author','taja_khabar','headline','related','description','category_id','status','image'];
 
-    public function news()
+
+    public function categories()
     {
-        return $this->hasMany('App\Model\News');
+        return $this->belongsTo('App\Model\Category','category_id');
     }
+
 }

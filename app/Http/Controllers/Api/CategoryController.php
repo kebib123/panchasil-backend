@@ -69,7 +69,11 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $cat=$this->category->getbyId($id);
+
+        return response()->json([
+            'news_category'=>$cat,
+        ],200);
     }
 
     /**
