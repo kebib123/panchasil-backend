@@ -16,8 +16,7 @@ class EloquentCategoryRepository extends AbstractRepository implements CategoryR
 
     public function getAll()
     {
-        $category=$this->entity()::all();
-
+        $category=$this->entity()::paginate(10);
         return $category;
     }
 

@@ -25,6 +25,7 @@ class NewsController extends Controller
     public function index()
     {
         $news=$this->news->all();
+
         return News::collection($news);
     }
 
