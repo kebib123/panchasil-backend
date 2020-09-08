@@ -24,7 +24,8 @@ class News extends JsonResource
             'taja_khabar'=>$this->taja_khabar,
             'headline'=>$this->headline,
             'related'=>$this->related,
-            'image'=>$this->image
+            'image'=>$this->image,
+            'path'=>'public/images/news/'.$this->image,
         ];
     }
 }

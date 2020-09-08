@@ -44,6 +44,30 @@ class EloquentNewsRepository extends AbstractRepository implements NewsRepositor
         return $news;
     }
 
+    public function update($request,$id)
+    {
+        $find=$this->entity()::find($id);
+        $data['title']=$request->title;
+        $data['author']=$request->author;
+        $data['status']=$request->status;
+        $data['taja_khabar']=$request->taja_khabar;
+        $data['headline']=$request->headline;
+        $data['related']=$request->related;
+        $data['description']=$request->description;
+        $data['category_id']=$request->category_id;
+        if ($request->hasFile('image')) {
+            $this->delete_file($id);
+            $image = $request->file('image');
+            $name = time() . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('/images/news');
+            $image->move($destinationPath, $name);
+            $data['image'] = $name;
+        }
+        $update=$find->update($data);
+        return $update;
+    }
+
+
     public function delete($id)
     {
         $find=$this->entity()::find($id);

@@ -91,8 +91,29 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-    }
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'title'=>'required|unique:news,title','.$id.','id',
+            'status'=>'required|in:pending,publish',
+            'author'=>'required',
+            'description'=>'required',
+            'category_id'=>'required|exists:categories,id',
+            'image'=>'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return response()->json([
+                "errors" => $errors
+            ],422);
+        }
+        try {
+            $this->news->update($request, $id);
+
+        } catch (\Exception $exception) {
+            throw new  \PDOException('Error in updating News' . $exception->getMessage());
+        }
+        return response()->json([
+            'message' => 'Updated Successfully',
+        ], 200);    }
 
     /**
      * Remove the specified resource from storage.
