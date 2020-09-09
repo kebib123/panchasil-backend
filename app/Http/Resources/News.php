@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class News extends JsonResource
 {
@@ -26,6 +27,8 @@ class News extends JsonResource
             'related'=>$this->related,
             'image'=>$this->image,
             'path'=>'public/images/news/'.$this->image,
+            'created_at'=>$this->created_at->toDateTimeString(),
+            'updated_at'=>$this->updated_at->toDateTimeString(),
         ];
     }
 }

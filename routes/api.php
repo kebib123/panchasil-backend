@@ -16,7 +16,17 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::group(['namespace' => 'Api', 'prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::group(['namespace' => 'Api', 'prefix' => 'admin', 'as' => 'admin.','middleware' => ['jwt.verify']], function () {
     Route::apiResource('news-category','CategoryController');
     Route::apiResource('news','NewsController');
+});
+Route::group(['namespace' => 'Api',], function () {
+
+    Route::post('login', 'AuthController@authenticate');
+    Route::post('register', 'AuthController@register');
+});
+
+Route::group(['namespace' => 'Api','middleware' => ['jwt.verify']], function() {
+    Route::get('user', 'AuthController@getAuthenticatedUser');
+    Route::get('closed', 'DataController@closed');
 });
