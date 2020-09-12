@@ -23,6 +23,7 @@ Route::group(['namespace' => 'Api', 'prefix' => 'admin', 'as' => 'admin.','middl
     Route::apiResource('news-category','CategoryController');
     Route::apiResource('news','NewsController');
 });
+Route::get('/news/paginate','Api\NewsController@paginate');
 Route::group(['namespace' => 'Api',], function () {
 
     Route::post('login', 'AuthController@authenticate');
