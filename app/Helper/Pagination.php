@@ -16,7 +16,7 @@ class Pagination
     {
         //http://localhost:3000/api/medicine?limit=1&page=1&sortBy=manufacturer&order=desc&searchText=cet
         $page = intval($request->page) ?: 1;
-        $limit = intval($request->limit) ?: 20;
+        $limit = intval($request->limit) ?: 10;
         $startIndex = ($page - 1) * $limit;
         $endIndex = $page * $limit;
         $retriveFromDb = $this
@@ -24,7 +24,7 @@ class Pagination
             ->offset($startIndex)
             ->limit($limit)
             ->select($this->select)
-            ->orderBy('id','asc');
+            ->orderBy($request->sortBy ? $request->sortBy : 'id',$request->order ? $request->order : 'asc');
         $queryResult = $retriveFromDb->get()->toArray();
         $numberOfData = $this->model::all()->count();
         $totalNumberOfPage = ceil($numberOfData / $limit);
