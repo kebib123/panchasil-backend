@@ -33,3 +33,9 @@ Route::group(['namespace' => 'Api','middleware' => ['jwt.verify']], function() {
     Route::get('user', 'AuthController@getAuthenticatedUser');
     Route::get('closed', 'DataController@closed');
 });
+Route::group(['prefix' => 'admin' , 'namespace'=>'Api','middleware'=>['jwt.verify']], function () {
+    Route::get('/ads',"AdsController@index")->name("api.ads");
+    Route::post('/ads',"AdsController@store")->name("api.ads.create");
+    Route::put('/ads/{id}',"AdsController@update")->name("api.ads.update");
+    Route::delete('/ads/{id}',"AdsController@destroy")->name("api.ads.destroy");
+});

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\Pagination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Repositories\Contracts\CategoryRepository;
@@ -23,12 +24,10 @@ class CategoryController extends Controller
         $this->category=$category;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $index=$this->category->getAll();
-        return response()->json([
-            'news_category'=>$index,
-        ],200);
+        $obj = new Pagination("\App\Model\Category",["name","status"]);
+        return response()->json($obj->paginate($request));
     }
 
     /**
