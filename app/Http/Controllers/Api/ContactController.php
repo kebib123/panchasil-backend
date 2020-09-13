@@ -24,7 +24,11 @@ class ContactController extends Controller
     }
     public function update(Request $request , $id)
     {
-        $updateContact = Contact::where("id",$id)->update($request->all());
+        $data = $request->all();
+        $data = array_filter($data,function($i){
+            return $i !='PUT';
+        });
+        $updateContact = Contact::where("id",$id)->update($data);
         if($updateContact)
         {
             return response()->json(['message'=>'update Successfully','error'=>null]);
