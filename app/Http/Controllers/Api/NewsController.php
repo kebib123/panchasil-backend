@@ -39,12 +39,6 @@ class NewsController extends Controller
     {
         //
     }
-    public function paginate(Request $request)
-    {
-        $obj = new Pagination("\App\Model\News", ["author","title","id"]);
-        $paginateResult = $obj->paginate($request);
-        return response()->json($paginateResult);
-    }
     /**
      * Store a newly created resource in storage.
      *

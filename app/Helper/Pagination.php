@@ -6,12 +6,13 @@ class Pagination
     public $model;
     public $searchableFields;
     public $select;
-    public function __construct($model, $searchableFields, $select = "*")
+    public function __construct($model, Array $searchableFields, $select = '*')
     {
         $this->model = $model;
         $this->searchableFields = $searchableFields;
         $this->select = $select;
     }
+    
     public function paginate($request)
     {
         //http://localhost:3000/api/medicine?limit=1&page=1&sortBy=manufacturer&order=desc&searchText=cet
