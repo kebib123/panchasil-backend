@@ -39,3 +39,12 @@ Route::group(['prefix' => 'admin' , 'namespace'=>'Api','middleware'=>['jwt.verif
     Route::put('/ads/{id}',"AdsController@update")->name("api.ads.update");
     Route::delete('/ads/{id}',"AdsController@destroy")->name("api.ads.destroy");
 });
+Route::group(['prefix' => 'admin' , 'namespace'=>'Api'], function () {
+    Route::group(['middleware' => 'jwt.verify'], function () {
+        Route::get('/contact',"ContactController@index")->name("api.contact");
+        Route::put('/contact/{id}',"ContactController@update")->name("api.contact.update");
+        Route::delete('/contact/{id}',"ContactController@destroy")->name("api.contact.destroy"); 
+    });
+    Route::post('/contact',"ContactController@store")->name("api.contact.create");
+});
+
