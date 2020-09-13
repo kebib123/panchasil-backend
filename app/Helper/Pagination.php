@@ -20,15 +20,13 @@ class Pagination
         $startIndex = ($page - 1) * $limit;
         $endIndex = $page * $limit;
         $retriveFromDb = $this
-            ->model::whereLike($this->searchableFields, $request->searchText ?: '')
+            ->model::whereLike($this->searchableFields, $request->searchText ? $request->searchText : '')
             ->offset($startIndex)
             ->limit($limit)
-            ->select($this->select);
-        if ($request->sortBy) {
-            $retriveFromDb = $retriveFromDb->orderBy($request->sortBy, $request->order);
-        }
-        $numberOfData = $retriveFromDb->count();
-        $queryResult = $retriveFromDb->get();
+            ->select($this->select)
+            ->orderBy('id','asc');
+        $queryResult = $retriveFromDb->get()->toArray();
+        $numberOfData = $this->model::all()->count();
         $totalNumberOfPage = ceil($numberOfData / $limit);
         $result = [];
         if ($startIndex > 0) {
