@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\News;
 use App\Repositories\Contracts\NewsRepository;
-
+use Illuminate\Support\Facades\URL;
 use Kurt\Repoist\Repositories\Eloquent\AbstractRepository;
 
 class EloquentNewsRepository extends AbstractRepository implements NewsRepository
@@ -29,7 +29,7 @@ class EloquentNewsRepository extends AbstractRepository implements NewsRepositor
             $name = time() . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/images/news');
             $image->move($destinationPath, $name);
-            $data['image'] = $name;
+            $data['image'] = URL::to('/')."/images/news/".$name;
         }
 
 
@@ -61,7 +61,7 @@ class EloquentNewsRepository extends AbstractRepository implements NewsRepositor
             $name = time() . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/images/news');
             $image->move($destinationPath, $name);
-            $data['image'] = $name;
+            $data['image'] = URL::to('/')."/images/news/".$name;
         }
         $update=$find->update($data);
         return $update;
@@ -78,7 +78,9 @@ class EloquentNewsRepository extends AbstractRepository implements NewsRepositor
     public function delete_file($id)
     {
         $findData = $this->entity()::find($id);
-        $fileName = $findData->image;
+        $fileUrl = $findData->image;
+        $urlInArray = explode('/',$fileUrl);
+        $fileName = $urlInArray[count($urlInArray)-1];
         $deletePath = public_path('images/news/' . $fileName);
         if (file_exists($deletePath) && is_file($deletePath)) {
             unlink($deletePath);

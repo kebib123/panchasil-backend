@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Category;
 use App\Repositories\Contracts\CategoryRepository;
-
+use Illuminate\Support\Facades\URL;
 use Kurt\Repoist\Repositories\Eloquent\AbstractRepository;
 
 class EloquentCategoryRepository extends AbstractRepository implements CategoryRepository
@@ -35,7 +35,7 @@ class EloquentCategoryRepository extends AbstractRepository implements CategoryR
             $name = time() . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/images/category');
             $image->move($destinationPath, $name);
-            $data['image'] = $name;
+            $data['image'] = URL::to('/')."/images/category/".$name;
         }
         $create=$this->entity()::create($data);
         return $create;
@@ -50,7 +50,7 @@ class EloquentCategoryRepository extends AbstractRepository implements CategoryR
             $name = time() . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/images/category');
             $image->move($destinationPath, $name);
-            $data['image'] = $name;
+            $data['image'] = URL::to('/')."/category/".$name;
         }
         $data['name']=$request->name;
         $data['status']=$request->status;
@@ -70,7 +70,9 @@ class EloquentCategoryRepository extends AbstractRepository implements CategoryR
     public function delete_file($id)
     {
         $findData = $this->entity()::find($id);
-        $fileName = $findData->image;
+        $fileUrl = $findData->image;
+        $urlInArray = explode('/',$fileUrl);
+        $fileName = $urlInArray[count($urlInArray)-1];
         $deletePath = public_path('images/category/' . $fileName);
         if (file_exists($deletePath) && is_file($deletePath)) {
             unlink($deletePath);
