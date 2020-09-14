@@ -49,6 +49,14 @@ class AdsController extends Controller
     }
     public function destroy($id)
     {
+        $findData = Ads::where("id",$id)->first();
+        $fileUrl = $findData->ads_image;
+        $urlInArray = explode('/',$fileUrl);
+        $fileName = $urlInArray[count($urlInArray)-1];
+        $deletePath = public_path('images/ads/' . $fileName);
+        if (file_exists($deletePath) && is_file($deletePath)) {
+            unlink($deletePath);
+        }
         $destroyAds = Ads::where('id',$id)->delete();
         if($destroyAds)
         {
