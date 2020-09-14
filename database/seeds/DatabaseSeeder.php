@@ -20,12 +20,12 @@ class DatabaseSeeder extends Seeder
             "email"=>"admin@admin.com",
             "password"=> Hash::make("11111111")
         ]);
-        DB::table("users")->insert([
+        /* DB::table("users")->insert([
             "name"=>"ashish",
             "email"=>"ashish336b@gmail.com",
             "password"=> Hash::make("11111111")
-        ]);
-        DB::table("categories")->insert([
+        ]); */
+        /* DB::table("categories")->insert([
             "name"=>"Testing",
             "status"=>"pending",
             "image"=>"a.jpg",
@@ -45,6 +45,6 @@ class DatabaseSeeder extends Seeder
                 "status"=>"pending",
                 "slug"=>"news$i",
             ]);
-        }
+        } */
     }
 }
