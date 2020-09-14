@@ -21,6 +21,7 @@ class CategoryController extends Controller
 
     public function __construct(CategoryRepository $category)
     {
+        $this->middleware("jwt.verify")->except(["index","show"]);
         $this->category=$category;
     }
 

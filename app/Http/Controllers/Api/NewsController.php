@@ -21,6 +21,7 @@ class NewsController extends Controller
 
     public function __construct(NewsRepository $news)
     {
+        $this->middleware("jwt.verify")->except(["index","show"]);
         $this->news = $news;
     }
     public function index(Request $request)
