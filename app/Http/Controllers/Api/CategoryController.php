@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Helper\Pagination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
+use App\Model\Category;
 use App\Repositories\Contracts\CategoryRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -95,18 +95,12 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name,' . $id . ',id',
-            'status' => 'required|in:pending,publish',
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json([
-                'errors' => $errors,
-            ], 422);
-        }
+        $data = $request->all();
+        $data = array_filter($data, function ($i) {
+            return $i != 'PUT';
+        });
         try {
-            $this->category->update($request, $id);
+            Category::where("id", $id)->update($data);
         } catch (\Exception $exception) {
             throw new \PDOException('Error in updating NewsCategory' . $exception->getMessage());
         }
