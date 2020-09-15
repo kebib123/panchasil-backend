@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\Pagination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\NewsRequest;
 use App\Http\Resources\News;
-use App\Model\News as ModelNews;
 use App\Repositories\Contracts\NewsRepository;
 use Illuminate\Http\Request;
 
@@ -26,7 +26,9 @@ class NewsController extends Controller
     }
     public function index(Request $request)
     {
-        return ModelNews::paginate(15);
+        $obj = new Pagination("\App\Model\News", ["author", "title", "id"]);
+        $paginateResult = $obj->paginate($request);
+        return response()->json($paginateResult);
     }
 
     /**

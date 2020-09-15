@@ -21,13 +21,13 @@ class CategoryController extends Controller
 
     public function __construct(CategoryRepository $category)
     {
-        $this->middleware("jwt.verify")->except(["index","show"]);
-        $this->category=$category;
+        $this->middleware("jwt.verify")->except(["index", "show"]);
+        $this->category = $category;
     }
 
     public function index(Request $request)
     {
-        $obj = new Pagination("\App\Model\Category",["name","status"]);
+        $obj = new Pagination("\App\Model\Category", ["name", "status"]);
         return response()->json($obj->paginate($request));
     }
 
@@ -49,15 +49,14 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        try{
+        try {
             $this->category->store($request);
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in saving NewsCategory' . $exception->getMessage());
         }
-        catch (\Exception $exception) {
-            throw new  \PDOException('Error in saving NewsCategory' . $exception->getMessage());
-        }
-            return response()->json([
-                'message' => 'News Category Successfully Added'
-            ], 200);
+        return response()->json([
+            'message' => 'News Category Successfully Added',
+        ], 200);
 
     }
 
@@ -69,11 +68,11 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $cat=$this->category->getbyId($id);
+        $cat = $this->category->getbyId($id);
 
         return response()->json([
-            'news_category'=>$cat,
-        ],200);
+            'news_category' => $cat,
+        ], 200);
     }
 
     /**
@@ -96,27 +95,24 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator=Validator::make($request->all(),[
-            'name'=>'required|unique:categories,name,'.$id.',id',
-            'status'=>'required|in:pending,publish',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:categories,name,' . $id . ',id',
+            'status' => 'required|in:pending,publish',
         ]);
-        if ($validator->fails())
-        {
-            $errors=$validator->errors()->all();
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
             return response()->json([
-                'errors'=>$errors,
-            ],422);
+                'errors' => $errors,
+            ], 422);
         }
-        try{
-            $this->category->update($request,$id);
-        }
-        catch (\Exception $exception)
-        {
-            throw new \PDOException('Error in updating NewsCategory'.$exception->getMessage());
+        try {
+            $this->category->update($request, $id);
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in updating NewsCategory' . $exception->getMessage());
         }
         return response()->json([
-            'message'=>'updated successfully',
-        ],200);
+            'message' => 'updated successfully',
+        ], 200);
     }
 
     /**
@@ -127,15 +123,13 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $this->category->delete($id);
-        }
-        catch (\Exception $exception)
-        {
-            throw new \PDOException('Error in deleting NewsCategory'.$exception->getMessage());
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in deleting NewsCategory' . $exception->getMessage());
         }
         return response()->json([
-            'message'=>'deleted successfully',
-        ],200);
+            'message' => 'deleted successfully',
+        ], 200);
     }
 }
