@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helper\Pagination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\NewsRequest;
 use App\Http\Resources\News;
+use App\Model\News as ModelNews;
 use App\Repositories\Contracts\NewsRepository;
 use Illuminate\Http\Request;
 
@@ -21,14 +21,12 @@ class NewsController extends Controller
 
     public function __construct(NewsRepository $news)
     {
-        $this->middleware("jwt.verify")->except(["index","show"]);
+        $this->middleware("jwt.verify")->except(["index", "show"]);
         $this->news = $news;
     }
     public function index(Request $request)
     {
-        $obj = new Pagination("\App\Model\News", ["author","title","id"]);
-        $paginateResult = $obj->paginate($request);
-        return response()->json($paginateResult);
+        return ModelNews::paginate(15);
     }
 
     /**
