@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\Pagination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\NewsRequest;
 use App\Http\Resources\News;
+use App\Model\News as ModelNews;
 use App\Repositories\Contracts\NewsRepository;
 use Illuminate\Http\Request;
 
@@ -20,13 +22,14 @@ class NewsController extends Controller
 
     public function __construct(NewsRepository $news)
     {
-        $this->news=$news;
+        $this->middleware("jwt.verify")->except(["index", "show"]);
+        $this->news = $news;
     }
-    public function index()
+    public function index(Request $request)
     {
-        $news=$this->news->all();
-
-        return News::collection($news);
+        $obj = new Pagination("\App\Model\News", ["author", "title", "id"]);
+        $paginateResult = $obj->paginate($request);
+        return response()->json($paginateResult);
     }
 
     /**
@@ -38,7 +41,6 @@ class NewsController extends Controller
     {
         //
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -47,14 +49,13 @@ class NewsController extends Controller
      */
     public function store(NewsRequest $request)
     {
-        try{
+        try {
             $this->news->store($request);
-        }
-        catch (\Exception $exception) {
-            throw new  \PDOException('Error in saving News' . $exception->getMessage());
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in saving News' . $exception->getMessage());
         }
         return response()->json([
-            'message' => 'News Successfully Added'
+            'message' => 'News Successfully Added',
         ], 200);
     }
 
@@ -66,7 +67,7 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-        $all=$this->news->getbyId($id);
+        $all = $this->news->getbyId($id);
 
         return new News($all);
     }
@@ -91,29 +92,18 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'title'=>'required|unique:news,title','.$id.','id',
-            'status'=>'required|in:pending,publish',
-            'author'=>'required',
-            'description'=>'required',
-            'category_id'=>'required|exists:categories,id',
-            'image'=>'required'
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json([
-                "errors" => $errors
-            ],422);
-        }
+        $data = $request->all();
+        $data = array_filter($data, function ($i) {
+            return $i != 'PUT';
+        });
         try {
-            $this->news->update($request, $id);
-
+            ModelNews::where("id", $id)->update($data);
         } catch (\Exception $exception) {
-            throw new  \PDOException('Error in updating News' . $exception->getMessage());
+            throw new \PDOException('Error in updating News' . $exception->getMessage());
         }
         return response()->json([
             'message' => 'Updated Successfully',
-        ], 200);    }
+        ], 200);}
 
     /**
      * Remove the specified resource from storage.
@@ -123,15 +113,13 @@ class NewsController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $this->news->delete($id);
-        }
-        catch (\Exception $exception)
-        {
-            throw new \PDOException('Error in deleting News'.$exception->getMessage());
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in deleting News' . $exception->getMessage());
         }
         return response()->json([
-            'message'=>'news deleted successfully',
-        ],200);
+            'message' => 'news deleted successfully',
+        ], 200);
     }
 }

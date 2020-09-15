@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\Pagination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
+use App\Model\Category;
 use App\Repositories\Contracts\CategoryRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -20,15 +21,14 @@ class CategoryController extends Controller
 
     public function __construct(CategoryRepository $category)
     {
-        $this->category=$category;
+        $this->middleware("jwt.verify")->except(["index", "show"]);
+        $this->category = $category;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $index=$this->category->getAll();
-        return response()->json([
-            'news_category'=>$index,
-        ],200);
+        $obj = new Pagination("\App\Model\Category", ["name", "status"]);
+        return response()->json($obj->paginate($request));
     }
 
     /**
@@ -49,15 +49,14 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        try{
+        try {
             $this->category->store($request);
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in saving NewsCategory' . $exception->getMessage());
         }
-        catch (\Exception $exception) {
-            throw new  \PDOException('Error in saving NewsCategory' . $exception->getMessage());
-        }
-            return response()->json([
-                'message' => 'News Category Successfully Added'
-            ], 200);
+        return response()->json([
+            'message' => 'News Category Successfully Added',
+        ], 200);
 
     }
 
@@ -69,11 +68,11 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $cat=$this->category->getbyId($id);
+        $cat = $this->category->getbyId($id);
 
         return response()->json([
-            'news_category'=>$cat,
-        ],200);
+            'news_category' => $cat,
+        ], 200);
     }
 
     /**
@@ -96,27 +95,18 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator=Validator::make($request->all(),[
-            'name'=>'required|unique:categories,name,'.$id.',id',
-            'status'=>'required|in:pending,publish',
-        ]);
-        if ($validator->fails())
-        {
-            $errors=$validator->errors()->all();
-            return response()->json([
-                'errors'=>$errors,
-            ],422);
-        }
-        try{
-            $this->category->update($request,$id);
-        }
-        catch (\Exception $exception)
-        {
-            throw new \PDOException('Error in updating NewsCategory'.$exception->getMessage());
+        $data = $request->all();
+        $data = array_filter($data, function ($i) {
+            return $i != 'PUT';
+        });
+        try {
+            Category::where("id", $id)->update($data);
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in updating NewsCategory' . $exception->getMessage());
         }
         return response()->json([
-            'message'=>'updated successfully',
-        ],200);
+            'message' => 'updated successfully',
+        ], 200);
     }
 
     /**
@@ -127,15 +117,13 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $this->category->delete($id);
-        }
-        catch (\Exception $exception)
-        {
-            throw new \PDOException('Error in deleting NewsCategory'.$exception->getMessage());
+        } catch (\Exception $exception) {
+            throw new \PDOException('Error in deleting NewsCategory' . $exception->getMessage());
         }
         return response()->json([
-            'message'=>'deleted successfully',
-        ],200);
+            'message' => 'deleted successfully',
+        ], 200);
     }
 }
