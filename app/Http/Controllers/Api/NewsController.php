@@ -92,7 +92,7 @@ class NewsController extends Controller
     public function update(Request $request, $id)
     {
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'title'=>'required|unique:news,title','.$id.','id',
+            'title'=>'required|unique:news,title,'.$id.',id',
             'status'=>'required|in:pending,publish',
             'author'=>'required',
             'description'=>'required',
