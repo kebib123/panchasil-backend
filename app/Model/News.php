@@ -24,4 +24,9 @@ class News extends Model
         return $this->belongsTo('App\Model\Category','category_id');
     }
 
+    public function tags()
+    {
+        return $this->hasMany('App\Model\NewsTag');
+    }
+
 }

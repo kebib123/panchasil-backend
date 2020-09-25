@@ -27,6 +27,7 @@ class News extends JsonResource
             'related'=>$this->related,
             'image'=>$this->image,
             'path'=>'public/images/news/'.$this->image,
+            'tags'=>$this->tags,
             'created_at'=>$this->created_at->toDateTimeString(),
             'updated_at'=>$this->updated_at->toDateTimeString(),
         ];
