@@ -22,7 +22,7 @@ class NewsController extends Controller
 
     public function __construct(NewsRepository $news)
     {
-//        $this->middleware("jwt.verify")->except(["index", "show"]);
+        $this->middleware("jwt.verify")->except(["index", "show"]);
         $this->news = $news;
     }
     public function index(Request $request)
@@ -81,6 +81,14 @@ class NewsController extends Controller
     public function edit($id)
     {
         //
+    }
+
+    public function getByType($type, $category, Request $request)
+    {
+        $query = $category == 'all' ? ['type' => $type] : ['category_id' => $category, 'type' => $type];
+        $obj = new Pagination("\App\Model\News", ["author", "title", "id"]);
+        $paginateResult = $obj->paginate($request, $query);
+        return $paginateResult;
     }
 
     /**

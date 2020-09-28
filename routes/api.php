@@ -47,6 +47,9 @@ Route::group(['namespace' => 'Api', 'middleware' => ['jwt.verify']], function ()
     Route::get('user', 'AuthController@getAuthenticatedUser');
     Route::get('closed', 'DataController@closed');
 });
+Route::group(['prefix' => 'admin', 'namespace' => 'APi'], function () {
+    Route::get("/news/{type}/type/{category}/category", 'NewsController@getByType');
+});
 Route::group(['prefix' => 'admin', 'namespace' => 'Api'], function () {
     Route::get('/ads', "AdsController@index")->name("api.ads");
     Route::get('/ads/{id}', "AdsController@show")->name("api.ads.show");
